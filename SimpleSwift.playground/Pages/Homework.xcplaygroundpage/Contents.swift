@@ -27,11 +27,75 @@ print("Welcome to the UW Calculator Playground")
 //: For this latter set of operations, it is safe to assume that `["count"]` (with no additional arguments) is 0, `["avg"]` is also 0, and `["fact"]` is 0. `["1", "fact"]` should return 1, and `["0", "fact"]` should also return 1. (Yes, 0-factorial is 1. True story.)
 //: 
 func calculate(_ args: [String]) -> Int {
-    return -1
+    
+    if args.contains("count"){
+        var count = 0
+        var list = args
+        while list[0] != "count"{
+            count += 1
+            list.removeFirst()
+        }
+        return count
+    }
+    
+    if args.contains("fact"){
+        guard var initial = Int(args[0]) else { return 0 }
+        guard var result = Int(args[0]) else { return 0 }
+        if initial == 0 {
+            return 1
+        }
+        initial -= 1
+        while initial > 1 {
+            result *= initial
+            initial -= 1
+        }
+        
+        return result
+    }
+    
+    if args.contains("avg"){
+        var sum = 0
+        var list = args
+        while list[0] != "avg"{
+            guard var num = Int(list[0]) else { return 0 }
+            sum += num
+            list.removeFirst()
+        }
+        if args.count > 1 {
+            return sum / (args.count - 1)
+        } else {
+            return 0
+        }
+    }
+    
+    enum Operation: String{
+        case add = "+"
+        case minus = "-"
+        case multiply = "*"
+        case devid = "/"
+        case modulo = "%"
+    }
+    
+    guard var op = Operation(rawValue: args[1]) else { return 0 }
+    guard var num1 = Int(args[0]),
+          var num2 = Int(args[2]) else {
+        return 0
+    }
+    
+    switch op{
+    case .add: return num1 + num2
+    case .minus: return num1 - num2
+    case .multiply: return num1 * num2
+    case .devid: return num1 / num2
+    case .modulo:
+        var result = num1 / num2
+        return num1 - (result * num2)
+    }
 }
 
 func calculate(_ arg: String) -> Int {
-    return -1
+    var list = arg.split(separator: " ").map(String.init)
+    return calculate(list)
 }
 
 //: Below this are the test expressions/calls to verify if your code is correct.
@@ -85,7 +149,7 @@ calculate("5 fact") == 120
 //: Implement `calculate([String])` and `calculate(String)` to handle negative numbers. You need only make the tests below pass. (You do not need to worry about "fact"/factorial with negative numbers, for example.)
 //:
 //: This is worth 1 pt
-/*
+
 calculate(["2", "+", "-2"]) == 0
 calculate(["2", "-", "-2"]) == 4
 calculate(["2", "*", "-2"]) == -4
@@ -100,7 +164,7 @@ calculate("2 - -2") == 4
 calculate("-2 / 2") == -1
 
 calculate("1 -2 3 -4 5 count") == 5
-*/
+
  
 //: Implement `calculate([String])` and `calculate(String)` to use 
 //: and return floating-point values. You need only make the tests 
@@ -112,12 +176,45 @@ calculate("1 -2 3 -4 5 count") == 5
 //: Integer-based versions above.
 //: 
 //: This is worth 1 pt
-/*
+
 func calculate(_ args: [String]) -> Double {
-    return -1.0
+    if args.contains("count"){
+        var count = 0
+        var list = args
+        while list[0] != "count"{
+            count += 1
+            list.removeFirst()
+        }
+        return Double(count)
+    }
+    
+    enum Operation: String{
+        case add = "+"
+        case minus = "-"
+        case multiply = "*"
+        case devid = "/"
+        case modulo = "%"
+    }
+    
+    guard var op = Operation(rawValue: args[1]) else { return 0 }
+    guard var num1 = Double(args[0]),
+          var num2 = Double(args[2]) else {
+        return 0.0
+    }
+    
+    switch op{
+    case .add: return num1 + num2
+    case .minus: return num1 - num2
+    case .multiply: return num1 * num2
+    case .devid: return num1 / num2
+    case .modulo:
+        var result = num1 / num2
+        return num1 - (result * num2)
+    }
 }
 func calculate(_ arg: String) -> Double {
-    return -1.0
+    var list = arg.split(separator: " ").map(String.init)
+    return calculate(list)
 }
 
 calculate(["2.0", "+", "2.0"]) == 4.0
@@ -127,4 +224,4 @@ calculate(["2.5", "*", "2.5"]) == 6.25
 calculate(["2.0", "/", "2.0"]) == 1.0
 calculate(["2.0", "%", "2.0"]) == 0.0
 calculate("1.0 2.0 3.0 4.0 5.0 count") == 5.0
-*/
+
